@@ -104,13 +104,23 @@ function buildFruitChain(): void {
   const chain = required<HTMLElement>('.fruit-chain');
   for (let level = 0; level < 11; level += 1) {
     const fruit = fruitAt(level);
-    const dot = document.createElement('span');
-    dot.className = 'fruit-dot';
-    dot.style.setProperty('--fruit-color', fruit.color);
-    dot.style.setProperty('--fruit-border', fruit.accent);
-    dot.style.setProperty('--fruit-size', `${18 + level * 1.5}px`);
-    dot.title = fruit.name;
-    chain.append(dot);
+    const item = document.createElement('canvas');
+    const displayRadius = fruit.radius * 0.32;
+    const size = Math.ceil(displayRadius * 2 + 8);
+    const pixelSize = Math.ceil(size * devicePixelRatio);
+    item.className = 'fruit-chain__item';
+    item.width = pixelSize;
+    item.height = pixelSize;
+    item.style.setProperty('--fruit-size', `${size}px`);
+    item.title = fruit.name;
+    item.setAttribute('aria-label', fruit.name);
+
+    const context = item.getContext('2d');
+    if (context) {
+      context.scale(devicePixelRatio, devicePixelRatio);
+      drawFruitCharacter(context, level, size / 2, size / 2, displayRadius);
+    }
+    chain.append(item);
   }
 }
 
